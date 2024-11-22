@@ -1,0 +1,4 @@
+name: EpicDeath
+version: 1
+api: 5.0.0
+main: Taskov1ch\EpicDeath\Main

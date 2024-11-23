@@ -5,7 +5,6 @@ namespace Taskov1ch\EpicDeath;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
@@ -63,19 +62,23 @@ class Main extends PluginBase
 		if ($this->inProcess($player)) return;
 
 		$this->process[] = $player;
-		$tmpGm = $player->getGamemode();
-		$player->setGamemode(GameMode::ADVENTURE());
 		$this->sendSound($this->config["start"], $player);
-
-		$player->getEffects()->add(new EffectInstance(
-			VanillaEffects::LEVITATION(), $this->config["duration"] * 20 + 10, 0, false
-		));
+		$lockPos = $player->getPosition();
 
 		$task = $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(
-			function () use ($player): void
+			function () use ($player, $lockPos): void
 			{
+				$player->getEffects()->add(new EffectInstance(
+					VanillaEffects::LEVITATION(), 20, 0, false
+				));
+
 				$pos = $player->getPosition();
+				$lockPos->y = $pos->getY();
 				$world = $player->getWorld();
+
+				if ($lockPos->distanceSquared($pos) > 9) {
+					$player->teleport($lockPos);
+				}
 
 				for ($i = 0; $i < 10; $i++) {
 					$world->addParticle(
@@ -87,16 +90,15 @@ class Main extends PluginBase
 		), 10);
 
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(
-			function () use ($player, $task, $tmpGm): void {
+			function () use ($player, $task): void {
 				$task->remove();
-				$this->endProcess($player, $tmpGm);
+				$this->endProcess($player);
 			}
 		), $this->config["duration"] * 20);
 	}
 
-	private function endProcess(Player $player, GameMode $tmpGm): void
+	private function endProcess(Player $player): void
 	{
-		$player->setGamemode($tmpGm);
 		$this->sendSound($this->config["end"], $player);
 
 		for ($i = 0; $i < 10; $i++) {

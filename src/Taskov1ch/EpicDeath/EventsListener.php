@@ -3,12 +3,12 @@
 namespace Taskov1ch\EpicDeath;
 
 use pocketmine\entity\Entity;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\server\CommandEvent;
 use pocketmine\player\Player;
 use Taskov1ch\EpicDeath\events\EpicDeathEvent;
@@ -50,6 +50,11 @@ class EventsListener implements Listener
 		$this->main->startProcess($victim);
 	}
 
+	public function onBreak(BlockBreakEvent $event): void
+	{
+		$this->cancelIfInProcess($event->getPlayer(), $event);
+	}
+
 	public function onDrop(PlayerDropItemEvent $event): void
 	{
 		$this->cancelIfInProcess($event->getPlayer(), $event);
@@ -65,16 +70,6 @@ class EventsListener implements Listener
 		$sender = $event->getSender();
 		if ($sender instanceof Player) {
 			$this->cancelIfInProcess($sender, $event);
-		}
-	}
-
-	public function onMove(PlayerMoveEvent $event): void
-	{
-		$player = $event->getPlayer();
-		$distance = $event->getFrom()->distanceSquared($event->getTo());
-
-		if ($this->main->inProcess($player) && $distance >= 0.01) {
-			$event->cancel();
 		}
 	}
 

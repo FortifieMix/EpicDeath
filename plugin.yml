@@ -1,4 +1,10 @@
 name: EpicDeath
-version: 1
+version: 1-beta
 api: 5.0.0
 main: Taskov1ch\EpicDeath\Main
+author: Taskov1ch
+website: https://taskovich.pro
+
+permissions:
+  epic.death.use:
+    default: op

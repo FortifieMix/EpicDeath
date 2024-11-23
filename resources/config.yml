@@ -11,8 +11,8 @@ end:
 cd: 300
 
 # How long should a player proliferate before dying? (in seconds)
-duration: 3
+duration: 10
 
 # Sound settings
-volume: 0.05
+volume: 0.1
 pitch: 1

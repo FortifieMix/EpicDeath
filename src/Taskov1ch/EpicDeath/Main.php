@@ -26,7 +26,11 @@ class Main extends PluginBase
 
 	protected function onDisable(): void
 	{
-		array_map(fn(Player $player): void => $player->kill(), $this->process);
+		foreach ($this->process as $player) {
+			$this->removeFromProcess($player);
+			$player->kill();
+		}
+
 		$this->process = [];
 	}
 

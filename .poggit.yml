@@ -5,4 +5,5 @@ branches:
 projects:
   EpicDeath:
     path: ""
+    icon: dont_touch_me/256x256.png
 ...

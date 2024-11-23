@@ -4,7 +4,9 @@ api: 5.0.0
 main: Taskov1ch\EpicDeath\Main
 author: Taskov1ch
 website: https://taskovich.pro
+load: STARTUP
 
 permissions:
   epic.death.use:
     default: op
+    description: Permission for an epic death.

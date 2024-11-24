@@ -1,15 +1,14 @@
 <?php
 
-namespace Taskov1ch\EpicDeath;
+namespace FortifiePE\EpicDeath;
 
-use pocketmine\entity\effect\EffectInstance;
-use pocketmine\entity\effect\VanillaEffects;
+use pocketmine\entity\Effect;
+use pocketmine\level\particle\EnchantmentTableParticle;
+use pocketmine\level\particle\MobSpawnParticle;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\player\Player;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
-use pocketmine\world\particle\EnchantmentTableParticle;
-use pocketmine\world\particle\MobSpawnParticle;
 
 class Main extends PluginBase
 {
@@ -17,13 +16,13 @@ class Main extends PluginBase
 	private array $cd = [];
 	private array $config;
 
-	protected function onEnable(): void
+	public function onEnable(): void
 	{
 		$this->getServer()->getPluginManager()->registerEvents(new EventsListener($this), $this);
 		$this->config = $this->getConfig()->getAll();
 	}
 
-	protected function onDisable(): void
+	public function onDisable(): void
 	{
 		foreach ($this->process as $player) {
 			$this->removeFromProcess($player);
@@ -36,14 +35,17 @@ class Main extends PluginBase
 	private function sendSound(array $sounds, Player $player): void
 	{
 		$pos = $player->getPosition();
-		$worldPlayers = $player->getWorld()->getPlayers();
+		$worldPlayers = $player->getLevel()->getPlayers();
 
 		array_map(function ($sound) use ($pos, $worldPlayers): void {
-			$pk = PlaySoundPacket::create(
-				$sound, $pos->getX(), $pos->getY(), $pos->getZ(),
-				$this->config["volume"], $this->config["pitch"]
-			);
-			array_map(fn(Player $p): bool => $p->getNetworkSession()->sendDataPacket(clone $pk), $worldPlayers);
+			$pk = new PlaySoundPacket();
+			$pk->sound = $sound;
+			$pk->x = $pos->getX();
+			$pk->y = $pos->getY();
+			$pk->z = $pos->getZ();
+			$pk->volume = $this->config["volume"];
+			$pk->float = $this->config["pitch"];
+			array_map(fn(Player $p): bool => $p->dataPacket(clone $pk), $worldPlayers);
 		}, $sounds);
 	}
 
@@ -68,23 +70,22 @@ class Main extends PluginBase
 		$task = $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(
 			function () use ($player, $lockPos): void
 			{
-				$player->getEffects()->add(new EffectInstance(
-					VanillaEffects::LEVITATION(), 20, 0, false
-				));
+				$player->addEffect(
+					Effect::getEffectByName("levitation")->setDuration(20)->setAmbient(0)->setVisible(false)
+				);
 
 				$pos = $player->getPosition();
 				$lockPos->y = $pos->getY();
-				$world = $player->getWorld();
+				$world = $player->getLevel();
 
 				if ($lockPos->distanceSquared($pos) > 9) {
 					$player->teleport($lockPos);
 				}
 
 				for ($i = 0; $i < 10; $i++) {
-					$world->addParticle(
-						$pos->add(mt_rand(-5, 5) / 10, mt_rand(-5, 5) / 10, mt_rand(-5, 5) / 10),
-						new EnchantmentTableParticle()
-					);
+					$world->addParticle(new EnchantmentTableParticle(
+						$pos->add(mt_rand(-5, 5) / 10, mt_rand(-5, 5) / 10, mt_rand(-5, 5) / 10)
+					));
 				}
 			}
 		), 10);
@@ -102,7 +103,7 @@ class Main extends PluginBase
 		$this->sendSound($this->config["end"], $player);
 
 		for ($i = 0; $i < 10; $i++) {
-			$player->getWorld()->addParticle($player->getPosition(), new MobSpawnParticle(3, 3));
+			$player->getLevel()->addParticle(new MobSpawnParticle($player->getPosition(), 3, 3));
 		}
 
 		$player->kill();

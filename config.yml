@@ -1,0 +1,18 @@
+# Sounds that will be played when the animation starts
+start:
+  - mob.enderdragon.death
+  # - random.totem
+
+# Sounds that will be played at the end of the animation (when the player dies)
+end:
+  - random.explode
+
+# Cooldown animation (anti-spam) (in seconds)
+cd: 300
+
+# How long should a player proliferate before dying? (in seconds)
+duration: 10
+
+# Sound settings
+volume: 0.1
+pitch: 1

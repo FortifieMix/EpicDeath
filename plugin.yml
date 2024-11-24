@@ -1,12 +1,13 @@
 name: EpicDeath
 version: 1-beta
-api: 5.0.0
-main: Taskov1ch\EpicDeath\Main
-author: Taskov1ch
-website: https://taskovich.pro
+api: 3.0.0
+main: FortifiePe\EpicDeath\Main
+author: Taskov1ch, FortifieMix
+website: https://taskovich.pro, https://vk.com/fortifiemix
 load: STARTUP
+description: Эффектный уход с поля боя.
 
 permissions:
   epic.death.use:
     default: op
-    description: Permission for an epic death.
+    description: Разрешение на эпическую смерть..

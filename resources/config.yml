@@ -1,18 +1,18 @@
-# Sounds that will be played when the animation starts
+# Звуки, которые будут проигрываться при начале анимации
 start:
   - mob.enderdragon.death
   # - random.totem
 
-# Sounds that will be played at the end of the animation (when the player dies)
+# Звуки, которые будут проигрываться в конце анимации (когда игрок умирает)
 end:
   - random.explode
 
-# Cooldown animation (anti-spam) (in seconds)
+# Анимация перезарядки (анти-спам) (в секундах)
 cd: 300
 
-# How long should a player proliferate before dying? (in seconds)
+# Как долго игрок должен "распространяться" перед смертью? (в секундах)
 duration: 10
 
-# Sound settings
+# Настройки звука
 volume: 0.1
 pitch: 1

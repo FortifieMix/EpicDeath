@@ -1,17 +1,16 @@
 <?php
 
-namespace Taskov1ch\EpicDeath;
+namespace FortifiePE\EpicDeath;
 
 use pocketmine\entity\Entity;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\server\CommandEvent;
-use pocketmine\player\Player;
-use Taskov1ch\EpicDeath\events\EpicDeathEvent;
+use pocketmine\Player;
 
 class EventsListener implements Listener
 {
@@ -27,7 +26,7 @@ class EventsListener implements Listener
 		$damager = $event->getDamager();
 
 		if ($this->isInProcess($victim) or $this->isInProcess($damager)) {
-			$event->cancel();
+			$event->setCancelled(true);
 			return;
 		}
 
@@ -39,14 +38,7 @@ class EventsListener implements Listener
 			return;
 		}
 
-		$customEvent = new EpicDeathEvent($victim);
-		$customEvent->call();
-
-		if ($customEvent->isCancelled()) {
-			return;
-		}
-
-		$event->setBaseDamage(0);
+		$event->setDamage(0);
 		$this->main->startProcess($victim);
 	}
 
@@ -65,9 +57,9 @@ class EventsListener implements Listener
 		$this->cancelIfInProcess($event->getPlayer(), $event);
 	}
 
-	public function onCommand(CommandEvent $event): void
+	public function onCommand(PlayerCommandPreprocessEvent $event): void
 	{
-		$sender = $event->getSender();
+		$sender = $event->getPlayer();
 		if ($sender instanceof Player) {
 			$this->cancelIfInProcess($sender, $event);
 		}

@@ -83,6 +83,10 @@ class Main extends PluginBase
 				}
 
 				for ($i = 0; $i < 10; $i++) {
+				    if (!$world) {
+				        break;
+				    }
+	
 					$world->addParticle(new EnchantmentTableParticle(
 						$pos->add(mt_rand(-5, 5) / 10, mt_rand(-5, 5) / 10, mt_rand(-5, 5) / 10)
 					));
@@ -92,7 +96,7 @@ class Main extends PluginBase
 
 		$this->getScheduler()->scheduleDelayedTask(new ClosureTask(
 			function () use ($player, $task): void {
-				$task->remove();
+			  $task->remove();
 				$this->endProcess($player);
 			}
 		), $this->config["duration"] * 20);

@@ -1,6 +1,6 @@
 <?php
 
-namespace FortifiePE\EpicDeath;
+namespace FortifiePe\EpicDeath;
 
 use pocketmine\entity\Entity;
 use pocketmine\event\block\BlockBreakEvent;

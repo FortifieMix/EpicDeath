@@ -35,9 +35,13 @@ class Main extends PluginBase
 	private function sendSound(array $sounds, Player $player): void
 	{
 		$pos = $player->getPosition();
-		$worldPlayers = $player->getLevel()->getPlayers();
+		$world = $player->getLevel();
+		
+		if (!$world) {
+		    return;
+		}
 
-		array_map(function ($sound) use ($pos, $worldPlayers): void {
+		array_map(function ($sound) use ($pos, $world): void {
 			$pk = new PlaySoundPacket();
 			$pk->sound = $sound;
 			$pk->x = $pos->getX();
@@ -45,7 +49,7 @@ class Main extends PluginBase
 			$pk->z = $pos->getZ();
 			$pk->volume = $this->config["volume"];
 			$pk->float = $this->config["pitch"];
-			array_map(fn(Player $p): bool => $p->dataPacket(clone $pk), $worldPlayers);
+			array_map(fn(Player $p): bool => $p->dataPacket(clone $pk), $world->getPlayers());
 		}, $sounds);
 	}
 

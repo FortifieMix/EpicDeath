@@ -68,7 +68,7 @@ class EventsListener implements Listener
 	private function cancelIfInProcess(Player $player, $event): void
 	{
 		if ($this->main->inProcess($player)) {
-			$event->cancel();
+			$event->setCancelled(true);
 		}
 	}
 
